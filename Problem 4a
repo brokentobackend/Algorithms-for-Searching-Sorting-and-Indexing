@@ -1,0 +1,53 @@
+# Class for implementing a count min sketch "single bank" of counters
+class CountMinSketch:
+    # Initialize with `num_counters`
+    def __init__ (self, num_counters):
+        self.m = num_counters
+        self.hash_fun_rep = get_random_hash_function()
+        self.counters = [0]*self.m
+    
+    # your code here
+    #get cell of word
+    def get_cell(self, word):
+        #apply hash function to the word
+        hash_result = hash_string(self.hash_fun_rep, word)
+        #mod hash_result by m
+        return hash_result % self.m
+    
+    # function: increment 
+    # given a word, increment its count in the countmin sketch
+    def increment(self, word):
+        # your code here
+        #increment corresponding cell by 1
+        cell = self.get_cell(word)
+        self.counters[cell] = self.counters[cell]+1    
+        
+    # function: approximateCount
+    # Given a word, get its approximate count
+    def approximateCount(self, word):
+        # your code here
+        #return cell location
+        return self.counters[self.get_cell(word)]
+        
+        
+        
+       
+ # We will now implement the algorithm for a bank of k counters
+
+# Initialize k different counters
+def initialize_k_counters(k, m): 
+    return [CountMinSketch(m) for i in range(k)]
+
+# Function increment_counters
+# increment each of the individual counters with the word
+def increment_counters(count_min_sketches, word):
+    # your code here
+    for cms in count_min_sketches:
+        #go through each hash function - k 
+        cms.increment(word)
+    return count_min_sketches
+        
+# Function: approximate_count
+# Get the approximate count by querying each counter bank and taking the minimum
+def approximate_count(count_min_sketches, word):
+    return min([cms.approximateCount(word) for cms in count_min_sketches])
